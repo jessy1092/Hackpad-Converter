@@ -7,6 +7,8 @@ import java.io.IOException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriBuilder;
 
+import org.lee.converter.content.Content;
+
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.api.client.config.ClientConfig;
@@ -40,7 +42,7 @@ public class HackpadConverter
 		setApiKey();
 		setPadUri();
 		hackpadBuild();
-		
+		tumblrBuild();
 	}
 	
 	public void hackpadBuild()
@@ -64,7 +66,10 @@ public class HackpadConverter
 	{
 		for(int i = 0; i < PADS_URI.length; i++)
 		{
-			getPadText(PADS_URI[i]);
+			String padText = getPadText(PADS_URI[i]);
+			Content content = new Content(padText);
+			updatePadTextToTumblr(content.getTitle(), content.getContent());
+			System.out.println(PADS_URI[i] + "Succeed");
 		}
 	}
 	
@@ -73,7 +78,7 @@ public class HackpadConverter
 		WebResource serviceGET = client.resource(
 				UriBuilder.fromUri(paduri).build());
 		String padText = serviceGET.accept(MediaType.APPLICATION_JSON).get(String.class);
-		System.out.println(padText);	
+//		System.out.println(padText);	
 		return padText;
 	}
 	
