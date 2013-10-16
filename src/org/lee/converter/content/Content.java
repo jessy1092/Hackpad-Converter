@@ -20,6 +20,7 @@ public class Content
 		boolean checkbody = false;
 		for(int i = 0; i < padLine.length; i++)
 		{
+			System.out.println(padLine[i]);
 			if(padLine[i].indexOf("</html>") >= 0)
 			{
 				break;
@@ -38,8 +39,9 @@ public class Content
 				}
 			}
 		}
-		content = content.replaceAll("<h2>", "<b>");
-		content = content.replaceAll("</h2>", "</b>");
+		content = content.replaceAll("<h2>", "<h1>");
+		content = content.replaceAll("</h2>", "</h1>");
+		content = content.replaceAll("/>",">");
 		System.out.println(title + " " + content);
 	}
 	

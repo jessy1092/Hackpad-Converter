@@ -8,6 +8,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriBuilder;
 
 import org.lee.converter.content.Content;
+import org.lee.hackpad.jackpad.JackpadClient;
 
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.WebResource;
@@ -31,29 +32,23 @@ public class HackpadConverter
 	private String TUMBLR_TOKEN_KEY;
 	private String TUMBLR_TOKEN_SECRET;
 	
-	private ClientConfig hackpadConfig;
-	private Client client;
+	private JackpadClient clientJackpad;
 	private JumblrClient clientTrumblr;
 	
-	private String[] PADS_URI;
+	private String[] padsID;
 
 	public HackpadConverter()
 	{
 		setApiKey();
-		setPadUri();
-		hackpadBuild();
+		setPadID();
+		jackpadBuild();
 		tumblrBuild();
 	}
 	
-	public void hackpadBuild()
+	public void jackpadBuild()
 	{
-		hackpadConfig = new DefaultClientConfig();
-		client = Client.create(hackpadConfig);
-		OAuthClientFilter filter = new OAuthClientFilter(
-				client.getProviders(), 
-				new OAuthParameters().consumerKey(HACKPAD_CLIENT_ID), 
-				new OAuthSecrets().consumerSecret(HACKPAD_SECRET));		
-		client.addFilter(filter);
+		clientJackpad = new JackpadClient(HACKPAD_CLIENT_ID, HACKPAD_SECRET);
+		clientJackpad.build();
 	}
 	
 	public void tumblrBuild()
@@ -64,21 +59,19 @@ public class HackpadConverter
 	
 	public void run()
 	{
-		for(int i = 0; i < PADS_URI.length; i++)
+		for(int i = 0; i < padsID.length; i++)
 		{
-			String padText = getPadText(PADS_URI[i]);
+			String padText = getPadText(padsID[i]);
 			Content content = new Content(padText);
-			updatePadTextToTumblr(content.getTitle(), content.getContent());
-			System.out.println(PADS_URI[i] + "Succeed");
+//			updatePadTextToTumblr(content.getTitle(), content.getContent());
+			System.out.println(padsID[i] + "Succeed");
 		}
 	}
 	
-	public String getPadText(String paduri)
+	public String getPadText(String padID)
 	{
-		WebResource serviceGET = client.resource(
-				UriBuilder.fromUri(paduri).build());
-		String padText = serviceGET.accept(MediaType.APPLICATION_JSON).get(String.class);
-//		System.out.println(padText);	
+		String padText = clientJackpad.getPadContentHTML("g0v", padID, "latest");
+		System.out.println(padText);	
 		return padText;
 	}
 	
@@ -136,7 +129,7 @@ public class HackpadConverter
 		}
 	}
 	
-	public void setPadUri()
+	public void setPadID()
 	{
 		try
 		{
@@ -144,20 +137,13 @@ public class HackpadConverter
 			BufferedReader br = new BufferedReader(fr);
 			String line;
 			String tmpCom = "";
-			String[] tmpuri;
 			while((line = br.readLine()) != null)
 			{
 				tmpCom += line + " ";
 			}
 			br.close();
 			fr.close();
-			tmpuri = tmpCom.split(" ");
-			PADS_URI = new String[tmpuri.length];
-			for(int i = 0; i < tmpuri.length; i++)
-			{
-				PADS_URI[i] = String.format("https://g0v.hackpad.com/api/1.0/pad/%s/content/latest.html", tmpuri[i]);
-			}
-			
+			padsID = tmpCom.split(" ");
 		}
 		catch(IOException e)
 		{

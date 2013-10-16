@@ -3,3 +3,4 @@
 *.txt
 *.settings
 bin/
+target/
