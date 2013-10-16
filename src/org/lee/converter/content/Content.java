@@ -75,12 +75,12 @@ public class Content
 		System.out.println(indices.toString());
 		
 		String tmpIndices = new String();
-		for(int i = 1; i < indices.size(); i++)
+		for(int i = 0; i < indices.size(); i++)
 		{
 			tmpIndices += String.format("<br>%s</br>", indices.get(i));
 		}
 		
-		content = content.replaceAll("<h1><a id=\"1\" name=\"1\">", String.format("<br></br><blockquote>目錄\n%s\n</blockquote>\n", tmpIndices) + "<h1><a id=\"1\" name=\"1\">");
+		content = content.replaceAll("<h1><a id=\"0\" name=\"0\">", String.format("<blockquote>目錄\n%s\n</blockquote>\n", tmpIndices) + "<h1><a id=\"0\" name=\"0\">");
 		System.out.println(content);
 	}
 	
