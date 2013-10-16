@@ -63,7 +63,8 @@ public class HackpadConverter
 		{
 			String padText = getPadText(padsID[i]);
 			Content content = new Content(padText);
-//			updatePadTextToTumblr(content.getTitle(), content.getContent());
+			content.createIndex();
+			updatePadTextToTumblr(content.getTitle(), content.getContent());
 			System.out.println(padsID[i] + "Succeed");
 		}
 	}
