@@ -4,19 +4,9 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.UriBuilder;
-
 import org.lee.converter.content.Content;
 import org.lee.hackpad.jackpad.JackpadClient;
 
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.WebResource;
-import com.sun.jersey.api.client.config.ClientConfig;
-import com.sun.jersey.api.client.config.DefaultClientConfig;
-import com.sun.jersey.oauth.client.OAuthClientFilter;
-import com.sun.jersey.oauth.signature.OAuthParameters;
-import com.sun.jersey.oauth.signature.OAuthSecrets;
 import com.tumblr.jumblr.JumblrClient;
 import com.tumblr.jumblr.types.TextPost;
 
@@ -32,8 +22,8 @@ public class HackpadConverter
 	private String TUMBLR_TOKEN_KEY;
 	private String TUMBLR_TOKEN_SECRET;
 	
-	private JackpadClient clientJackpad;
-	private JumblrClient clientTrumblr;
+	private JackpadClient jackpadClient;
+	private JumblrClient jumblrClient;
 	
 	private String[] padsID;
 
@@ -47,14 +37,14 @@ public class HackpadConverter
 	
 	public void jackpadBuild()
 	{
-		clientJackpad = new JackpadClient(HACKPAD_CLIENT_ID, HACKPAD_SECRET);
-		clientJackpad.build();
+		jackpadClient = new JackpadClient(HACKPAD_CLIENT_ID, HACKPAD_SECRET);
+		jackpadClient.build();
 	}
 	
 	public void tumblrBuild()
 	{
-		clientTrumblr = new JumblrClient(TUMBLR_CONSUMER_KEY, TUMBLR_CONSUMER_SECRET);
-		clientTrumblr.setToken(TUMBLR_TOKEN_KEY, TUMBLR_TOKEN_SECRET);
+		jumblrClient = new JumblrClient(TUMBLR_CONSUMER_KEY, TUMBLR_CONSUMER_SECRET);
+		jumblrClient.setToken(TUMBLR_TOKEN_KEY, TUMBLR_TOKEN_SECRET);
 	}
 	
 	public void run()
@@ -71,7 +61,7 @@ public class HackpadConverter
 	
 	public String getPadText(String padID)
 	{
-		String padText = clientJackpad.getPadContentHTML("g0v", padID, "latest");
+		String padText = jackpadClient.getPadContentHTML("g0v", padID, "latest");
 		System.out.println(padText);	
 		return padText;
 	}
@@ -80,7 +70,7 @@ public class HackpadConverter
 	{	
 		try
 		{
-			TextPost post = clientTrumblr.newPost("g0vtw.tumblr.com", TextPost.class);
+			TextPost post = jumblrClient.newPost("g0vtw.tumblr.com", TextPost.class);
 			post.setFormat("html");
 			post.setBody(tumblrContent);
 			post.setTitle(tumblrTitle);
